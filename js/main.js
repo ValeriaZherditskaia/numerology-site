@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const adminBtn = document.getElementById('adminToggleBtn');
     if (adminBtn) {
         adminBtn.addEventListener('click', () => {
-            window.location.href = '/admin.html';
+            window.location.href = 'admin.html';
         });
     }
 });
