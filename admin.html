@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Админ-панель — Квантовый код личности</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="style.css" />
+
+    <style>
+        /* ============================================================
+           ТОЛЬКО УНИКАЛЬНЫЕ СТИЛИ ДЛЯ АДМИНКИ
+           ============================================================ */
+
+        .admin-container {
+            max-width: 960px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 40px 0;
+        }
+
+        /* ---- Кнопки выбора типа разбора ---- */
+        .type-selector {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .type-btn {
+            padding: 12px 28px;
+            background: transparent;
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .type-btn:hover:not(:disabled) {
+            border-color: var(--emerald-light);
+            color: var(--text-primary);
+            background: var(--emerald-glow);
+        }
+
+        .type-btn.active {
+            background: var(--emerald-deep);
+            color: #FFFFFF;
+            border-color: var(--emerald-deep);
+        }
+
+        .type-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .type-btn .badge {
+            font-size: 10px;
+            background: var(--emerald-glow);
+            padding: 2px 8px;
+            border-radius: 20px;
+            color: var(--emerald-deep);
+            font-weight: 400;
+        }
+
+        .type-btn.active .badge {
+            background: rgba(255, 255, 255, 0.2);
+            color: #FFFFFF;
+        }
+
+        .input-group {
+            display: none;
+        }
+
+        .input-group.active {
+            display: block;
+        }
+
+        .date-fields {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .date-fields .form-group {
+            flex: 0 0 auto;
+            min-width: 80px;
+        }
+
+        .date-fields .form-group input {
+            text-align: center;
+            font-size: 20px;
+            letter-spacing: 0.08em;
+        }
+
+        .admin-actions-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 24px 0 16px;
+            padding: 16px 20px;
+            background: var(--white);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .admin-actions-bar .btn {
+            padding: 10px 24px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all var(--transition);
+            border: none;
+        }
+
+        .btn-edit {
+            background: var(--emerald-deep);
+            color: var(--text-white);
+        }
+        .btn-edit:hover {
+            background: var(--emerald-medium);
+        }
+        .btn-edit.active {
+            background: #D4875A;
+        }
+
+        .btn-download {
+            background: var(--ivory);
+            color: var(--text-primary);
+            border: 1.5px solid var(--border);
+        }
+        .btn-download:hover {
+            border-color: var(--emerald-deep);
+            color: var(--emerald-deep);
+        }
+
+        .btn-logout {
+            background: transparent;
+            color: var(--text-secondary);
+            border: none;
+            font-size: 14px;
+            font-weight: 400;
+            opacity: 0.5;
+            transition: all var(--transition);
+        }
+        .btn-logout:hover {
+            opacity: 1;
+            color: var(--text-primary);
+        }
+
+        .admin-edit-hint {
+            font-size: 11px;
+            color: var(--text-muted);
+            opacity: 0.5;
+            transition: opacity var(--transition);
+            display: block;
+            margin-top: 8px;
+            text-align: center;
+        }
+
+        .admin-edit-hint.visible {
+            opacity: 1;
+        }
+
+        /* ---- Блок "Миссия души" ---- */
+        .mission-intro {
+            background: var(--ivory);
+            border-radius: 16px;
+            padding: 28px 32px;
+            border-left: 4px solid var(--emerald-deep);
+            margin-bottom: 32px;
+        }
+
+        .mission-intro h3 {
+            font-family: 'Inter', sans-serif;
+            font-size: 18px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+        }
+
+        .mission-intro p {
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .mission-intro .steps {
+            list-style: none;
+            padding: 0;
+            margin: 12px 0;
+        }
+
+        .mission-intro .steps li {
+            display: flex;
+            gap: 12px;
+            padding: 6px 0;
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            border-bottom: 1px solid rgba(232, 227, 218, 0.4);
+        }
+
+        .mission-intro .steps li:last-child {
+            border-bottom: none;
+        }
+
+        .mission-intro .steps .num {
+            font-weight: 600;
+            color: var(--emerald-deep);
+            min-width: 24px;
+            flex-shrink: 0;
+        }
+
+        .mission-intro .closing {
+            font-weight: 500;
+            color: var(--emerald-deep);
+            text-align: center;
+            padding-top: 12px;
+            margin-top: 12px;
+            border-top: 1px solid var(--border);
+            font-size: 15px;
+        }
+
+        /* ---- Карточка цифры для даты ---- */
+        .number-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 32px 36px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            transition: all var(--transition);
+        }
+
+        .number-card:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .number-card .number-display {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 56px;
+            font-weight: 400;
+            color: var(--emerald-deep);
+            margin-bottom: 4px;
+            line-height: 1;
+        }
+
+        .number-card .number-title {
+            font-family: 'Inter', sans-serif;
+            font-size: 18px;
+            font-weight: 400;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            letter-spacing: 0.04em;
+        }
+
+        .number-card .number-title span {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .number-card .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 12px 0 16px;
+        }
+
+        .number-card .core-text {
+            font-size: 16px;
+            line-height: 1.8;
+            color: var(--text-primary);
+            opacity: 0.85;
+        }
+
+        .number-card .core-text.editable {
+            cursor: text;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: all var(--transition);
+            border: 2px solid transparent;
+            background: transparent;
+        }
+
+        .number-card .core-text.editable:hover {
+            background: var(--emerald-glow);
+        }
+
+        .number-card .core-text.editable.editing {
+            border-color: var(--emerald-deep);
+            background: var(--white);
+            outline: none;
+        }
+
+        .number-card .shadow-block {
+            background: var(--ivory);
+            border-left: 3px solid var(--emerald-deep);
+            padding: 14px 18px;
+            border-radius: 0 8px 8px 0;
+            margin-top: 16px;
+        }
+
+        .number-card .shadow-block .label {
+            font-weight: 500;
+            color: var(--emerald-deep);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .number-card .shadow-block .text {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-muted);
+        }
+
+        .number-card .shadow-block .text.editable {
+            cursor: text;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: all var(--transition);
+            border: 2px solid transparent;
+            background: transparent;
+        }
+
+        .number-card .shadow-block .text.editable:hover {
+            background: var(--emerald-glow);
+        }
+
+        .number-card .shadow-block .text.editable.editing {
+            border-color: var(--emerald-deep);
+            background: var(--white);
+            outline: none;
+        }
+
+        /* ---- Адаптив ---- */
+        @media (max-width: 768px) {
+            .admin-container {
+                padding: 16px 0;
+            }
+
+            .type-selector {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .type-btn {
+                justify-content: center;
+                width: 100%;
+            }
+
+            .date-fields {
+                flex-direction: row;
+                gap: 8px;
+            }
+
+            .date-fields .form-group {
+                flex: 1;
+                min-width: 60px;
+            }
+
+            .number-card {
+                padding: 20px 18px;
+            }
+
+            .number-card .number-display {
+                font-size: 40px;
+            }
+
+            .admin-actions-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .admin-actions-bar .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .mission-intro {
+                padding: 20px 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .number-card .number-display {
+                font-size: 32px;
+            }
+
+            .number-card .core-text {
+                font-size: 14px;
+            }
+
+            .date-fields .form-group input {
+                font-size: 16px;
+                padding: 6px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="admin-container">
+
+        <!-- ===== HERO ===== -->
+        <header class="hero">
+            <h1>
+                Код, который ты <span class="italic" id="heroItalic">носишь</span>
+            </h1>
+            <p class="subtitle" id="heroSubtitle">
+                Впиши три слова, которые дали тебе при рождении.<br />
+                Узнай, какой путь они вычертили в пространстве чисел.
+            </p>
+        </header>
+
+        <!-- ===== ВЫБОР ТИПА РАЗБОРА ===== -->
+        <div class="type-selector">
+            <button class="type-btn active" data-type="fio">📝 По ФИО</button>
+            <button class="type-btn" data-type="name">📛 По имени</button>
+            <button class="type-btn" data-type="date">📅 По дате</button>
+            <button class="type-btn" data-type="phone" disabled>📱 По телефону <span class="badge">В разработке</span></button>
+        </div>
+
+        <!-- ===== ФОРМА ВВОДА ===== -->
+        <section class="altar">
+            <div class="altar-inner">
+
+                <!-- ---- Группа: По ФИО ---- -->
+                <div class="input-group active" id="inputFio">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="lastname">Фамилия</label>
+                            <div class="input-wrapper">
+                                <input type="text" id="lastname" class="input-field" placeholder="Родовой узор" />
+                                <span class="input-line"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="firstname">Имя</label>
+                            <div class="input-wrapper">
+                                <input type="text" id="firstname" class="input-field" placeholder="Личный слог" />
+                                <span class="input-line"></span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="patronymic">Отчество</label>
+                            <div class="input-wrapper">
+                                <input type="text" id="patronymic" class="input-field" placeholder="Наследие отца" />
+                                <span class="input-line"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ---- Группа: По имени (уменьшено, по центру) ---- -->
+                <div class="input-group" id="inputName">
+                    <div class="form-row" style="justify-content:center;">
+                        <div class="form-group" style="flex:0 0 300px; max-width:100%;">
+                            <label for="nameInput" style="text-align:center;display:block;">Имя</label>
+                            <div class="input-wrapper">
+                                <input type="text" id="nameInput" class="input-field" placeholder="Ваше имя" style="text-align:center;" />
+                                <span class="input-line"></span>
+                            </div>
+                            <p style="font-size:12px;color:var(--text-muted);margin-top:8px;text-align:center;opacity:0.6;">
+                                Например: Валерия
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ---- Группа: По дате (уменьшено, по центру) ---- -->
+                <div class="input-group" id="inputDate">
+                    <div class="form-row" style="justify-content:center;">
+                        <div class="form-group" style="flex:0 0 auto; max-width:100%;">
+                            <label style="text-align:center;display:block;">Дата рождения</label>
+                            <div class="date-fields" style="justify-content:center;">
+                                <div class="form-group" style="flex:0 0 70px;">
+                                    <div class="input-wrapper">
+                                        <input type="text" id="dateDay" class="input-field" placeholder="ДД" maxlength="2" style="text-align:center;" />
+                                        <span class="input-line"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group" style="flex:0 0 70px;">
+                                    <div class="input-wrapper">
+                                        <input type="text" id="dateMonth" class="input-field" placeholder="ММ" maxlength="2" style="text-align:center;" />
+                                        <span class="input-line"></span>
+                                    </div>
+                                </div>
+                                <div class="form-group" style="flex:0 0 110px;">
+                                    <div class="input-wrapper">
+                                        <input type="text" id="dateYear" class="input-field" placeholder="ГГГГ" maxlength="4" style="text-align:center;" />
+                                        <span class="input-line"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <p style="font-size:12px;color:var(--text-muted);margin-top:8px;text-align:center;opacity:0.6;">
+                                Например: 09 05 1995
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button id="calculateBtn" class="btn-primary" disabled>Узнать код</button>
+                    <button id="clearBtn" class="btn-secondary">Очистить</button>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ===== РЕЗУЛЬТАТЫ ===== -->
+        <section id="results" class="results" style="display: none;">
+            <h2 class="results-main-title">Твой нумерологический код</h2>
+            <div id="resultsContent" class="results-grid"></div>
+            <span class="admin-edit-hint" id="editHint">✏️ Кликните по тексту, чтобы изменить описание</span>
+        </section>
+
+        <!-- ===== ПАНЕЛЬ ДЕЙСТВИЙ ===== -->
+        <div class="admin-actions-bar">
+            <button class="btn btn-edit" id="editToggleBtn">✏️ Редактировать описания</button>
+            <button class="btn btn-download" id="downloadBtn">📥 Скачать результат (TXT)</button>
+            <button class="btn btn-logout" id="logoutBtn">Выйти</button>
+        </div>
+
+        <div id="errorMessage" class="error-message"></div>
+
+    </div>
+
+    <script type="module">
+        // ============================================================
+        // АДМИН-ПАНЕЛЬ — с выбором типа разбора
+        // ============================================================
+
+        import { calculateFio, calculateDate, calculateName } from './js/calculator.js';
+        import { renderFioResult, renderDateResult, renderNameResult } from './js/renderer.js';
+        import { getNumberData, getNumberDataDate } from './js/database.js';
+        import { BLOCKS_CONFIG, SECTION_IDS, SECTION_LABELS, getValueFromSource } from './js/config.js';
+
+        // ---- DOM ----
+        const typeBtns = document.querySelectorAll('.type-btn:not(:disabled)');
+        const inputFio = document.getElementById('inputFio');
+        const inputName = document.getElementById('inputName');
+        const inputDate = document.getElementById('inputDate');
+
+        const lastnameInput = document.getElementById('lastname');
+        const firstnameInput = document.getElementById('firstname');
+        const patronymicInput = document.getElementById('patronymic');
+
+        const nameInput = document.getElementById('nameInput');
+
+        const dateDayInput = document.getElementById('dateDay');
+        const dateMonthInput = document.getElementById('dateMonth');
+        const dateYearInput = document.getElementById('dateYear');
+
+        const calculateBtn = document.getElementById('calculateBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const resultsSection = document.getElementById('results');
+        const resultsContent = document.getElementById('resultsContent');
+        const errorMessage = document.getElementById('errorMessage');
+        const editToggleBtn = document.getElementById('editToggleBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const editHint = document.getElementById('editHint');
+        const heroItalic = document.getElementById('heroItalic');
+        const heroSubtitle = document.getElementById('heroSubtitle');
+
+        let currentType = 'fio';
+        let isEditMode = false;
+        let currentResult = null;
+        let currentDateResult = null;
+        let currentNameResult = null;
+
+        // ============================================================
+        // ПЕРЕКЛЮЧЕНИЕ ТИПА
+        // ============================================================
+
+        typeBtns.forEach((btn) => {
+            btn.addEventListener('click', function() {
+                typeBtns.forEach((b) => b.classList.remove('active'));
+                this.classList.add('active');
+
+                currentType = this.dataset.type;
+
+                document.querySelectorAll('.input-group').forEach((el) => {
+                    el.classList.remove('active');
+                });
+
+                if (currentType === 'fio') {
+                    inputFio.classList.add('active');
+                    heroItalic.textContent = 'носишь';
+                    heroSubtitle.innerHTML = 'Впиши три слова, которые дали тебе при рождении.<br />Узнай, какой путь они вычертили в пространстве чисел.';
+                } else if (currentType === 'name') {
+                    inputName.classList.add('active');
+                    heroItalic.textContent = 'зовут';
+                    heroSubtitle.innerHTML = 'Впиши своё имя.<br />Узнай, какой код оно несёт в себе.';
+                } else if (currentType === 'date') {
+                    inputDate.classList.add('active');
+                    heroItalic.textContent = 'носишь';
+                    heroSubtitle.innerHTML = 'Впиши свою дату рождения.<br />Узнай код своей души и её миссию.';
+                }
+
+                clearResults();
+                checkFields();
+            });
+        });
+
+        // ============================================================
+        // ПРОВЕРКА ПОЛЕЙ
+        // ============================================================
+
+        function checkFields() {
+            let hasRequired = false;
+
+            if (currentType === 'fio') {
+                const lastname = lastnameInput.value.trim();
+                const firstname = firstnameInput.value.trim();
+                hasRequired = lastname !== '' && firstname !== '';
+            } else if (currentType === 'name') {
+                const name = nameInput.value.trim();
+                hasRequired = name !== '';
+            } else if (currentType === 'date') {
+                const day = dateDayInput.value.trim();
+                const month = dateMonthInput.value.trim();
+                const year = dateYearInput.value.trim();
+                hasRequired = day.length === 2 && month.length === 2 && year.length === 4;
+            }
+
+            calculateBtn.classList.toggle('active', hasRequired);
+            calculateBtn.disabled = !hasRequired;
+        }
+
+        // ---- Слушатели для ФИО ----
+        [lastnameInput, firstnameInput, patronymicInput].forEach((input) => {
+            input.addEventListener('input', checkFields);
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !calculateBtn.disabled) handleCalculate();
+            });
+        });
+
+        // ---- Слушатели для имени ----
+        [nameInput].forEach((input) => {
+            input.addEventListener('input', checkFields);
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !calculateBtn.disabled) handleCalculate();
+            });
+        });
+
+        // ---- Слушатели для даты ----
+        [dateDayInput, dateMonthInput, dateYearInput].forEach((input) => {
+            input.addEventListener('input', checkFields);
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !calculateBtn.disabled) handleCalculate();
+            });
+
+            input.addEventListener('input', function() {
+                const maxLength = this.getAttribute('maxlength');
+                if (maxLength && this.value.length >= parseInt(maxLength)) {
+                    const next = this.closest('.date-fields').querySelector(
+                        this.id === 'dateDay' ? '#dateMonth' :
+                        this.id === 'dateMonth' ? '#dateYear' : null
+                    );
+                    if (next) next.focus();
+                }
+            });
+        });
+
+        // ============================================================
+        // РАСЧЁТ
+        // ============================================================
+
+        function handleCalculate() {
+            errorMessage.classList.remove('show');
+            errorMessage.textContent = '';
+            resultsSection.style.display = 'none';
+
+            if (currentType === 'fio') {
+                calculateFioHandler();
+            } else if (currentType === 'name') {
+                calculateNameHandler();
+            } else if (currentType === 'date') {
+                calculateDateHandler();
+            }
+        }
+
+        calculateBtn.addEventListener('click', handleCalculate);
+
+        function calculateFioHandler() {
+            const lastname = lastnameInput.value.trim();
+            const firstname = firstnameInput.value.trim();
+            const patronymic = patronymicInput.value.trim();
+
+            if (!lastname || !firstname) {
+                errorMessage.textContent = '❌ Заполните фамилию и имя!';
+                errorMessage.classList.add('show');
+                return;
+            }
+
+            const result = calculateFio(lastname, firstname, patronymic || '');
+            currentResult = result;
+            currentDateResult = null;
+            currentNameResult = null;
+
+            if (result.error) {
+                errorMessage.textContent = '❌ ' + result.error;
+                errorMessage.classList.add('show');
+                return;
+            }
+
+            resultsContent.innerHTML = renderFioResult(result);
+            resultsSection.style.display = 'block';
+            editHint.classList.add('visible');
+
+            if (isEditMode) enableEditMode();
+
+            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function calculateNameHandler() {
+            const name = nameInput.value.trim();
+
+            if (!name) {
+                errorMessage.textContent = '❌ Введите имя!';
+                errorMessage.classList.add('show');
+                return;
+            }
+
+            const result = calculateName(name);
+            currentNameResult = result;
+            currentResult = null;
+            currentDateResult = null;
+
+            if (result.error) {
+                errorMessage.textContent = '❌ ' + result.error;
+                errorMessage.classList.add('show');
+                return;
+            }
+
+            resultsContent.innerHTML = renderNameResult(result);
+            resultsSection.style.display = 'block';
+            editHint.classList.add('visible');
+
+            if (isEditMode) enableEditMode();
+
+            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function calculateDateHandler() {
+            const day = dateDayInput.value.trim();
+            const month = dateMonthInput.value.trim();
+            const year = dateYearInput.value.trim();
+
+            if (day.length !== 2 || month.length !== 2 || year.length !== 4) {
+                errorMessage.textContent = '❌ Введите полную дату в формате ДД ММ ГГГГ!';
+                errorMessage.classList.add('show');
+                return;
+            }
+
+            const result = calculateDate(day, month, year);
+            currentDateResult = result;
+            currentResult = null;
+            currentNameResult = null;
+
+            if (result.error) {
+                errorMessage.textContent = '❌ ' + result.error;
+                errorMessage.classList.add('show');
+                return;
+            }
+
+            resultsContent.innerHTML = renderDateResult(result);
+            resultsSection.style.display = 'block';
+            editHint.classList.add('visible');
+
+            if (isEditMode) enableEditMode();
+
+            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // ============================================================
+        // ОЧИСТКА
+        // ============================================================
+
+        function clearResults() {
+            resultsSection.style.display = 'none';
+            resultsContent.innerHTML = '';
+            errorMessage.classList.remove('show');
+            errorMessage.textContent = '';
+            editHint.classList.remove('visible');
+            currentResult = null;
+            currentDateResult = null;
+            currentNameResult = null;
+        }
+
+        clearBtn.addEventListener('click', () => {
+            lastnameInput.value = '';
+            firstnameInput.value = '';
+            patronymicInput.value = '';
+            nameInput.value = '';
+            dateDayInput.value = '';
+            dateMonthInput.value = '';
+            dateYearInput.value = '';
+            calculateBtn.classList.remove('active');
+            calculateBtn.disabled = true;
+            clearResults();
+            if (isEditMode) toggleEditMode();
+            lastnameInput.focus();
+        });
+
+        // ============================================================
+        // РЕДАКТИРОВАНИЕ
+        // ============================================================
+
+        function toggleEditMode() {
+            isEditMode = !isEditMode;
+            const allEditable = document.querySelectorAll('.editable');
+
+            if (isEditMode) {
+                allEditable.forEach((el) => {
+                    el.contentEditable = 'true';
+                    el.classList.add('editing');
+                });
+                editToggleBtn.textContent = '💾 Сохранить и выйти';
+                editToggleBtn.classList.add('active');
+                editHint.textContent = '✏️ Редактирование включено. Кликните по тексту, чтобы изменить.';
+                editHint.style.opacity = '1';
+            } else {
+                allEditable.forEach((el) => {
+                    el.contentEditable = 'false';
+                    el.classList.remove('editing');
+                });
+                editToggleBtn.textContent = '✏️ Редактировать описания';
+                editToggleBtn.classList.remove('active');
+                editHint.textContent = '✏️ Кликните по тексту, чтобы изменить описание';
+                editHint.style.opacity = '0.5';
+            }
+        }
+
+        editToggleBtn.addEventListener('click', toggleEditMode);
+
+        document.addEventListener('focusout', (e) => {
+            if (isEditMode && e.target.classList && e.target.classList.contains('editable')) {
+                const newText = e.target.textContent.trim();
+                const number = e.target.dataset.number;
+                const context = e.target.dataset.context;
+                if (number && context) {
+                    try {
+                        const saved = localStorage.getItem('numerology_admin_data');
+                        const data = saved ? JSON.parse(saved) : {};
+                        if (!data[number]) data[number] = {};
+                        data[number][context] = newText;
+                        localStorage.setItem('numerology_admin_data', JSON.stringify(data));
+                        console.log('✅ Сохранено: ' + number + ' → ' + context);
+                    } catch (err) {
+                        console.warn('Ошибка сохранения:', err);
+                    }
+                }
+            }
+        });
+
+        // ============================================================
+        // СКАЧИВАНИЕ
+        // ============================================================
+
+        downloadBtn.addEventListener('click', () => {
+            if (!currentResult && !currentDateResult && !currentNameResult) {
+                alert('Сначала рассчитайте код!');
+                return;
+            }
+
+            let content = '========================================\n';
+            content += 'КОД ЛИЧНОСТИ — РЕЗУЛЬТАТ\n';
+            content += 'Дата: ' + new Date().toLocaleDateString() + '\n';
+
+            if (currentResult) {
+                // ---- ФИО ----
+                content += 'ФИО: ' + lastnameInput.value.trim() + ' ' + firstnameInput.value.trim() + ' ' + patronymicInput.value.trim() + '\n';
+                content += '========================================\n\n';
+
+                for (let b = 0; b < BLOCKS_CONFIG.length; b++) {
+                    const block = BLOCKS_CONFIG[b];
+                    const sectionTitle = SECTION_LABELS[block.id] || block.title;
+                    content += '--- ' + block.icon + ' ' + sectionTitle + ' ---\n';
+                    content += block.description + '\n\n';
+
+                    for (let s = 0; s < block.sources.length; s++) {
+                        const sourceKey = block.sources[s];
+                        const value = getValueFromSource(currentResult, sourceKey);
+                        if (!value) continue;
+
+                        let numbers = [];
+                        if (Array.isArray(value)) {
+                            if (value.length === 0) continue;
+                            numbers = value;
+                        } else {
+                            numbers = [String(value)];
+                            if (numbers[0] === '0' || numbers[0] === '') continue;
+                        }
+
+                        const labels = {
+                            'code_lastname': 'Код фамилии',
+                            'code_firstname': 'Код имени',
+                            'code_patronymic': 'Код отчества',
+                            'self_view': 'Как вы видите себя',
+                            'others_view': 'Как вас видят другие',
+                            'self_view_by_kt': 'Как себя видит по КТ',
+                            'others_view_by_kt': 'Как видят окружение по КТ',
+                            'rk': 'Рабочий код (РК)',
+                            'earth_general': 'Общая программа Земли',
+                            'earth_subjective': 'Субъективная реальность',
+                            'earth_objective': 'Объективная реальность',
+                            'money_general': 'Общая программа Денег',
+                            'money_subjective': 'Субъективная реальность',
+                            'money_objective': 'Объективная реальность',
+                            'mission_general': 'Общая программа Миссии',
+                            'mission_subjective': 'Субъективная реальность',
+                            'mission_objective': 'Объективная реальность'
+                        };
+
+                        content += '  ' + (labels[sourceKey] || sourceKey) + ':\n';
+                        for (let n = 0; n < numbers.length; n++) {
+                            const num = numbers[n];
+                            const numData = getNumberData(num);
+                            const minusText = numData.minus || '';
+                            const showMinus = block.id !== 'mission';
+                            content += '    ' + num + ' → ' + (numData[block.context] || 'Описание отсутствует');
+                            if (minusText && showMinus) {
+                                content += '\n      Тень: ' + minusText;
+                            }
+                            content += '\n';
+                        }
+                        content += '\n';
+                    }
+                    content += '\n';
+                }
+
+            } else if (currentNameResult) {
+                // ---- ИМЯ (с Тенью) ----
+                content += 'Имя: ' + nameInput.value.trim() + '\n';
+                content += '========================================\n\n';
+
+                // ---- 1. КОД ИМЕНИ (сумма) ----
+                content += '--- 📛 КОД ИМЕНИ ---\n';
+                const codeNumData = getNumberData(currentNameResult.codeSum);
+                content += 'Сумма кода: ' + currentNameResult.codeSum + '\n';
+                content += 'Значение: ' + (codeNumData.core || 'Описание отсутствует') + '\n';
+                if (codeNumData.minus) {
+                    content += 'Тень: ' + codeNumData.minus + '\n';
+                }
+                content += '\n';
+
+                // ---- 2. КАК ВЫ ВИДИТЕ СЕБЯ ----
+                content += '--- 🪞 КАК ВЫ ВИДИТЕ СЕБЯ ---\n';
+                for (let i = 0; i < currentNameResult.selfView.length; i++) {
+                    const num = currentNameResult.selfView[i];
+                    const numData = getNumberData(num);
+                    content += '  ' + num + ' → ' + (numData.personality || 'Описание отсутствует');
+                    if (numData.minus) {
+                        content += '\n      Тень: ' + numData.minus;
+                    }
+                    content += '\n';
+                }
+                content += '\n';
+
+                // ---- 3. КАК ВАС ВИДЯТ ДРУГИЕ ----
+                content += '--- 👥 КАК ВАС ВИДЯТ ДРУГИЕ ---\n';
+                for (let j = 0; j < currentNameResult.envView.length; j++) {
+                    const num2 = currentNameResult.envView[j];
+                    const numData2 = getNumberData(num2);
+                    content += '  ' + num2 + ' → ' + (numData2.personality || 'Описание отсутствует');
+                    if (numData2.minus) {
+                        content += '\n      Тень: ' + numData2.minus;
+                    }
+                    content += '\n';
+                }
+                content += '\n';
+
+                // ---- 4. ОБЩАЯ ПРОГРАММА ----
+                content += '--- 📊 ОБЩАЯ ПРОГРАММА ---\n';
+                const totalData = getNumberData(currentNameResult.totalSum);
+                content += '  ' + currentNameResult.totalSum + ' → ' + (totalData.core || 'Описание отсутствует');
+                if (totalData.minus) {
+                    content += '\n      Тень: ' + totalData.minus;
+                }
+                content += '\n\n';
+
+                // ---- 5. ВСЕ ПРОГРАММЫ ----
+                content += '--- 🌀 ВСЕ ПРОГРАММЫ ---\n';
+                for (let k = 0; k < currentNameResult.allPrograms.length; k++) {
+                    const num3 = currentNameResult.allPrograms[k];
+                    const numData3 = getNumberData(num3);
+                    content += '  ' + num3 + ' → ' + (numData3.core || 'Описание отсутствует');
+                    if (numData3.minus) {
+                        content += '\n      Тень: ' + numData3.minus;
+                    }
+                    content += '\n';
+                }
+                content += '\n';
+
+            } else if (currentDateResult) {
+                // ---- ДАТА ----
+                content += 'Дата рождения: ' + currentDateResult.dateStr + '\n';
+                content += 'Код: ' + currentDateResult.finalCode + '\n';
+                content += '========================================\n\n';
+
+                const dateData = currentDateResult;
+                const numberData = getNumberDataDate(dateData.finalCode);
+                content += '--- 📅 КОД ДАТЫ РОЖДЕНИЯ ---\n\n';
+                content += 'Ваш код: ' + dateData.finalCode + '\n\n';
+                content += numberData.core || 'Описание отсутствует' + '\n';
+                if (numberData.minus) {
+                    content += '\nТень: ' + numberData.minus + '\n';
+                }
+            }
+
+            content += '\n========================================\n';
+            content += 'Справочник: /spravochnik.html\n';
+            content += '========================================\n';
+
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            const fileName = currentResult ?
+                'numerology_' + lastnameInput.value.trim() + '_' + firstnameInput.value.trim() + '.txt' :
+                currentNameResult ?
+                'numerology_name_' + nameInput.value.trim() + '.txt' :
+                'numerology_date_' + currentDateResult.dateStr.replace(/\./g, '_') + '.txt';
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        });
+
+        // ============================================================
+        // ВЫХОД
+        // ============================================================
+
+        logoutBtn.addEventListener('click', () => {
+            if (confirm('Выйти из админ-панели?')) {
+                window.location.href = '/';
+            }
+        });
+
+        // ============================================================
+        // ИНИЦИАЛИЗАЦИЯ
+        // ============================================================
+
+        checkFields();
+        console.log('🔐 Админ-панель загружена (с выбором типа разбора)');
+    </script>
+
+</body>
+</html>

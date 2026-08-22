@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Квантовый код личности</title>
+
+    <!-- Шрифты -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+    <!-- ===== ПЕРЕКЛЮЧАТЕЛЬ ТЕМЫ ===== -->
+    <div class="theme-toggle-wrapper">
+        <span class="theme-toggle-label">🌙</span>
+        <input type="checkbox" class="theme-toggle" id="themeToggle" />
+        <span class="theme-toggle-label">☀️</span>
+    </div>
+
+    <!-- ===== КНОПКА АДМИН ===== -->
+    <button class="admin-toggle-btn" id="adminToggleBtn" aria-label="Перейти в админ-панель">
+        Админ
+    </button>
+    
+    <!-- ===== ДЕКОРАТИВНЫЙ ЛИСТ ===== -->
+    <div class="leaf" aria-hidden="true"></div>
+
+    <!-- ===== КОНТЕЙНЕР ===== -->
+    <div class="container">
+
+        <!-- ===== HERO ===== -->
+        <header class="hero">
+            <h1>
+                Код, который ты <span class="italic">носишь</span>
+            </h1>
+            <p class="subtitle">
+                Впиши три слова, которые дали тебе при рождении.<br />
+                Узнай, какой путь они вычертили в пространстве чисел.
+            </p>
+        </header>
+
+        <!-- ===== АЛТАРЬ ВВОДА ===== -->
+        <section class="altar" aria-label="Форма ввода ФИО">
+            <div class="altar-inner">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="lastname">Фамилия</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="lastname" class="input-field" placeholder="Родовой узор" autocomplete="family-name" />
+                            <span class="input-line"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="firstname">Имя</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="firstname" class="input-field" placeholder="Личный слог" autocomplete="given-name" />
+                            <span class="input-line"></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="patronymic">Отчество</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="patronymic" class="input-field" placeholder="Наследие отца" autocomplete="additional-name" />
+                            <span class="input-line"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button id="calculateBtn" class="btn-primary" disabled>Узнать код</button>
+                    <button id="clearBtn" class="btn-secondary">Очистить</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== РЕЗУЛЬТАТЫ ===== -->
+        <section id="results" class="results" style="display: none;" aria-label="Результаты расчёта">
+            <h2 class="results-main-title">Твой нумерологический код</h2>
+            <div id="resultsContent" class="results-grid"></div>
+        </section>
+
+        <!-- ===== НАВИГАЦИЯ "ДОРОЖНАЯ КАРТА" ===== -->
+        <nav class="roadmap-nav" id="roadmapNav" aria-label="Навигация по разделам">
+            <div class="roadmap-line"></div>
+            <ul class="roadmap-list" id="roadmapList">
+                <!-- Генерируется JavaScript -->
+            </ul>
+        </nav>
+
+        <!-- ===== ОШИБКИ ===== -->
+        <div id="errorMessage" class="error-message" role="alert"></div>
+
+        <!-- ===== FOOTER ===== -->
+        <footer>
+            <p>&copy; 2026 Квантовый код личности &middot; Сделано с <span class="heart" aria-hidden="true">❤</span></p>
+        </footer>
+
+    </div>
+
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>

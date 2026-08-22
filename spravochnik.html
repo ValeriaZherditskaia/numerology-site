@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Справочник цифр — Квантовый код личности</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="style.css" />
+
+    <style>
+        /* ============================================================
+           СТИЛИ ДЛЯ СПРАВОЧНИКА
+           ============================================================ */
+
+        .spravochnik-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 24px 60px;
+        }
+
+        .spravochnik-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .spravochnik-header h1 {
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            font-size: 44px;
+            letter-spacing: 0.04em;
+            color: var(--text-primary);
+        }
+
+        .spravochnik-header h1 span {
+            color: var(--emerald-deep);
+        }
+
+        .spravochnik-header p {
+            color: var(--text-secondary);
+            font-size: 16px;
+            font-weight: 300;
+        }
+
+        .spravochnik-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 36px;
+        }
+
+        .spravochnik-nav a {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 400;
+            color: var(--text-secondary);
+            background: var(--white);
+            border: 1px solid var(--border);
+            text-decoration: none;
+            transition: all var(--transition);
+        }
+
+        .spravochnik-nav a:hover {
+            background: var(--emerald-glow);
+            border-color: var(--emerald-deep);
+            color: var(--emerald-deep);
+        }
+
+        .spravochnik-nav a.active {
+            background: var(--emerald-deep);
+            color: var(--text-white);
+            border-color: var(--emerald-deep);
+        }
+
+        .spravochnik-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 12px;
+        }
+
+        .spravochnik-item {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition);
+            box-shadow: var(--shadow);
+        }
+
+        .spravochnik-item:hover {
+            background: var(--warm-beige-light);
+            border-color: var(--emerald-deep);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .spravochnik-item .number {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 32px;
+            color: var(--emerald-deep);
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .spravochnik-item .preview {
+            font-size: 12px;
+            color: var(--text-secondary);
+            opacity: 0.6;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.4;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 24px;
+            color: var(--emerald-deep);
+            text-decoration: none;
+            font-size: 14px;
+            transition: all var(--transition);
+            opacity: 0.7;
+        }
+
+        .back-link:hover {
+            opacity: 1;
+        }
+
+        .search-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 12px 20px;
+            border-radius: 30px;
+            border: 1px solid var(--border);
+            background: var(--white);
+            color: var(--text-primary);
+            font-size: 16px;
+            margin: 0 auto 24px;
+            display: block;
+            transition: all var(--transition);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--emerald-deep);
+            box-shadow: 0 0 0 3px var(--emerald-glow);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* ---- Переключатель темы в справочнике ---- */
+        .spravochnik-theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 24px;
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .spravochnik-theme-toggle .theme-toggle-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            letter-spacing: 0.04em;
+        }
+
+        .spravochnik-theme-toggle .theme-toggle {
+            width: 48px;
+            height: 26px;
+            background: var(--border);
+            border-radius: 13px;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            transition: all var(--transition);
+            appearance: none;
+        }
+
+        .spravochnik-theme-toggle .theme-toggle::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--white);
+            transition: all var(--transition);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .spravochnik-theme-toggle .theme-toggle:checked {
+            background: var(--emerald-deep);
+        }
+
+        .spravochnik-theme-toggle .theme-toggle:checked::after {
+            transform: translateX(22px);
+        }
+
+        .spravochnik-theme-toggle .theme-toggle:hover {
+            opacity: 0.8;
+        }
+
+        .not-found {
+            text-align: center;
+            color: var(--text-secondary);
+            grid-column: 1 / -1;
+            padding: 40px;
+            font-size: 16px;
+        }
+
+        @media (max-width: 600px) {
+            .spravochnik-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+
+            .spravochnik-header h1 {
+                font-size: 28px;
+            }
+
+            .spravochnik-nav a {
+                font-size: 11px;
+                padding: 4px 10px;
+            }
+
+            .spravochnik-theme-toggle {
+                top: 12px;
+                right: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="spravochnik-container">
+
+        <!-- ===== ПЕРЕКЛЮЧАТЕЛЬ ТЕМЫ ===== -->
+        <div class="spravochnik-theme-toggle">
+            <span class="theme-toggle-label">🌙</span>
+            <input type="checkbox" class="theme-toggle" id="themeToggle" />
+            <span class="theme-toggle-label">☀️</span>
+        </div>
+
+        <!-- Назад -->
+        <a href="/" class="back-link">← Вернуться к калькулятору</a>
+
+        <!-- Заголовок -->
+        <header class="spravochnik-header">
+            <h1>Справочник <span>цифр</span></h1>
+            <p>Полное описание всех чисел от 0 до 100 в 7 контекстах</p>
+        </header>
+
+        <!-- Поиск -->
+        <input type="text" class="search-input" id="searchInput" placeholder="🔍 Найти цифру (например, 24, 7, 81)..." />
+
+        <!-- Навигация по диапазонам -->
+        <nav class="spravochnik-nav" id="rangeNav">
+            <!-- Генерируется JavaScript -->
+        </nav>
+
+        <!-- Сетка цифр -->
+        <div class="spravochnik-grid" id="numbersGrid">
+            <!-- Генерируется JavaScript -->
+        </div>
+    </div>
+
+    <script type="module">
+        // ============================================================
+        // СПРАВОЧНИК
+        // ============================================================
+
+        import { getNumberData, getAllNumbers } from './js/database.js';
+        import { showNumberCard } from './js/ui.js';
+
+        // ============================================================
+        // 1. ТЕМА
+        // ============================================================
+
+        function applyTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            const toggle = document.getElementById('themeToggle');
+            if (toggle) {
+                toggle.checked = theme === 'light';
+            }
+            localStorage.setItem('theme', theme);
+        }
+
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            applyTheme(newTheme);
+        }
+
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                applyTheme(savedTheme);
+            } else {
+                applyTheme('dark');
+            }
+
+            const toggle = document.getElementById('themeToggle');
+            if (toggle) {
+                toggle.addEventListener('change', toggleTheme);
+            }
+        }
+
+        // ============================================================
+        // 2. ОСНОВНАЯ ЛОГИКА
+        // ============================================================
+
+        const allNumbers = getAllNumbers();
+
+        function generateRangeNav() {
+            const nav = document.getElementById('rangeNav');
+            const ranges = [
+                { label: 'Все', start: 0, end: 100 },
+                { label: '0–9', start: 0, end: 9 },
+                { label: '10–19', start: 10, end: 19 },
+                { label: '20–29', start: 20, end: 29 },
+                { label: '30–39', start: 30, end: 39 },
+                { label: '40–49', start: 40, end: 49 },
+                { label: '50–59', start: 50, end: 59 },
+                { label: '60–69', start: 60, end: 69 },
+                { label: '70–79', start: 70, end: 79 },
+                { label: '80–89', start: 80, end: 89 },
+                { label: '90–100', start: 90, end: 100 }
+            ];
+
+            nav.innerHTML = '';
+
+            for (let i = 0; i < ranges.length; i++) {
+                const range = ranges[i];
+                const link = document.createElement('a');
+                link.href = '#';
+                link.textContent = range.label;
+                if (i === 0) link.classList.add('active');
+
+                link.addEventListener('click', (function(start, end, linkEl) {
+                    return function(e) {
+                        e.preventDefault();
+                        const allLinks = document.querySelectorAll('.spravochnik-nav a');
+                        for (let j = 0; j < allLinks.length; j++) {
+                            allLinks[j].classList.remove('active');
+                        }
+                        linkEl.classList.add('active');
+                        renderNumbers(start, end);
+                    };
+                })(range.start, range.end, link));
+
+                nav.appendChild(link);
+            }
+        }
+
+        function renderNumbers(start, end, searchTerm) {
+            searchTerm = searchTerm || '';
+            const grid = document.getElementById('numbersGrid');
+
+            let filtered = allNumbers.filter(n => n >= start && n <= end);
+
+            if (searchTerm.trim() !== '') {
+                const term = searchTerm.trim().toLowerCase();
+                filtered = filtered.filter(n => {
+                    const data = getNumberData(n);
+                    return String(n).includes(term) ||
+                        data.core.toLowerCase().includes(term) ||
+                        data.personality.toLowerCase().includes(term) ||
+                        data.energy.toLowerCase().includes(term) ||
+                        data.earth.toLowerCase().includes(term) ||
+                        data.money.toLowerCase().includes(term) ||
+                        data.mission.toLowerCase().includes(term);
+                });
+            }
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '<p class="not-found">Ничего не найдено 😔</p>';
+                return;
+            }
+
+            let html = '';
+            for (let i = 0; i < filtered.length; i++) {
+                const n = filtered[i];
+                const data = getNumberData(n);
+                const preview = data.core.length > 60 ? data.core.slice(0, 60) + '…' : data.core;
+                html += '<div class="spravochnik-item" data-number="' + n + '">';
+                html += '<span class="number">' + n + '</span>';
+                html += '<span class="preview">' + preview + '</span>';
+                html += '</div>';
+            }
+            grid.innerHTML = html;
+
+            const items = grid.querySelectorAll('.spravochnik-item');
+            for (let j = 0; j < items.length; j++) {
+                items[j].addEventListener('click', function() {
+                    const number = this.dataset.number;
+                    showNumberCard(number);
+                });
+            }
+        }
+
+        // ---- Поиск ----
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value;
+            const allLinks = document.querySelectorAll('.spravochnik-nav a');
+            for (let i = 0; i < allLinks.length; i++) {
+                allLinks[i].classList.remove('active');
+            }
+
+            if (searchTerm.trim() === '') {
+                const firstLink = document.querySelector('.spravochnik-nav a:first-child');
+                if (firstLink) firstLink.classList.add('active');
+                renderNumbers(0, 100);
+            } else {
+                renderNumbers(0, 100, searchTerm);
+            }
+        });
+
+        // ---- Инициализация ----
+        initTheme();
+        generateRangeNav();
+        renderNumbers(0, 100);
+
+        // ---- Открываем модалку с цифрой, если есть параметр в URL ----
+        const params = new URLSearchParams(window.location.search);
+        const numberParam = params.get('number');
+        if (numberParam) {
+            setTimeout(() => {
+                showNumberCard(numberParam);
+            }, 300);
+        }
+    </script>
+
+</body>
+</html>
